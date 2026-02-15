@@ -15,8 +15,11 @@ Route::get('/', function () {
 });
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::get('/login', [LoginController::class, 'showAdminLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
+
+    Route::get('/cashier/login', [LoginController::class, 'showCashierLoginForm'])->name('cashier.login');
+    Route::post('/cashier/login', [LoginController::class, 'login']);
 });
 
 Route::middleware('auth')->group(function () {
@@ -48,5 +51,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
+
+    Route::prefix('cashier')->name('cashier.')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\Cashier\DashboardController::class, 'index'])->name('dashboard');
+    });
+
+    Route::prefix('customer')->name('customer.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Customer\CustomerModeController::class, 'index'])->name('index');
+        Route::post('/exit', [App\Http\Controllers\Customer\CustomerModeController::class, 'exit'])->name('exit');
     });
 });
