@@ -28,4 +28,9 @@ class Stock extends Model
     {
         return $this->hasMany(ProductRecipe::class);
     }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(StockActivity::class);
+    }
 }
