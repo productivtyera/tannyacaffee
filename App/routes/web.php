@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\RecipeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SalesController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,5 +43,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/sales', [SalesController::class, 'index'])->name('sales');
         Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 });
