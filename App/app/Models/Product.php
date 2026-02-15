@@ -38,4 +38,23 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    public function getTotalHppAttribute()
+    {
+        return $this->recipes->sum(function ($recipe) {
+            return $recipe->amount_needed * ($recipe->stock->price_per_unit ?? 0);
+        });
+    }
+
+    public function getMarginAttribute()
+    {
+        $hpp = $this->total_hpp;
+        if ($this->base_price <= 0) return 0;
+        return (($this->base_price - $hpp) / $this->base_price) * 100;
+    }
+
+    public function getGrossProfitAttribute()
+    {
+        return $this->base_price - $this->total_hpp;
+    }
 }
