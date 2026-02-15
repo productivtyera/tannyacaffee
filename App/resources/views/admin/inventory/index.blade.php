@@ -102,10 +102,10 @@
                                     {{ $stock->measure_unit }}
                                 </td>
                                 <td class="py-5 text-[15px] font-black {{ $isLow ? 'text-secondary' : 'text-[#1a2b3c]' }} text-center">
-                                    {{ number_format($stock->current_stock, 0, ',', '.') }}
+                                    {{ (float)$stock->current_stock == (int)$stock->current_stock ? number_format($stock->current_stock, 0, ',', '.') : rtrim(rtrim(number_format($stock->current_stock, 3, ',', '.'), '0'), ',') }}
                                 </td>
                                 <td class="py-5 text-[15px] font-bold text-gray-300 text-center">
-                                    {{ number_format($stock->min_stock_alert, 0, ',', '.') }}
+                                    {{ (float)$stock->min_stock_alert == (int)$stock->min_stock_alert ? number_format($stock->min_stock_alert, 0, ',', '.') : rtrim(rtrim(number_format($stock->min_stock_alert, 3, ',', '.'), '0'), ',') }}
                                 </td>
                                 <td class="py-5 text-center">
                                     <div class="text-[13px] font-bold text-gray-400">Rp</div>
@@ -207,7 +207,7 @@
                                     @endphp
                                     {{ $adjLabel }} 
                                     <span class="font-black {{ $adjColor }}">
-                                        {{ $adjType === 'in' ? '+' : '-' }}{{ number_format($activity->changes['amount'] ?? 0, 0, ',', '.') }}{{ $activity->stock->measure_unit }}
+                                        {{ $adjType === 'in' ? '+' : '-' }}{{ (float)($activity->changes['amount'] ?? 0) == (int)($activity->changes['amount'] ?? 0) ? number_format($activity->changes['amount'] ?? 0, 0, ',', '.') : rtrim(rtrim(number_format($activity->changes['amount'] ?? 0, 3, ',', '.'), '0'), ',') }}{{ $activity->stock->measure_unit }}
                                     </span>
                                 @else
                                     telah diperbarui
@@ -316,12 +316,12 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label id="stockLabel" for="current_stock" class="block text-sm font-bold text-[#1a2b3c] mb-2">Stok Awal</label>
-                                    <input type="number" name="current_stock" id="current_stock" placeholder="0" required min="0"
+                                    <input type="number" name="current_stock" id="current_stock" placeholder="0" required min="0" step="any"
                                         class="w-full bg-[#f8f9fa] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-[#2ecc71]/20 transition-all font-bold text-center">
                                 </div>
                                 <div>
                                     <label for="min_stock_alert" class="block text-sm font-bold text-[#1a2b3c] mb-2">Batas Minimum</label>
-                                    <input type="number" name="min_stock_alert" id="min_stock_alert" placeholder="0" required min="0"
+                                    <input type="number" name="min_stock_alert" id="min_stock_alert" placeholder="0" required min="0" step="any"
                                         class="w-full bg-[#f8f9fa] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-[#2ecc71]/20 transition-all font-bold text-center">
                                 </div>
                             </div>
