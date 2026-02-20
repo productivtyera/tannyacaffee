@@ -49,14 +49,14 @@
                     <span class="font-medium">Dashboard</span>
                 </a>
                 
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-[#233B36] hover:text-white">
+                <a href="{{ route('cashier.orders.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('cashier.orders.*') ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' : 'text-gray-400 hover:bg-[#233B36] hover:text-white' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                     <span class="font-medium">Pesanan</span>
                 </a>
 
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-[#233B36] hover:text-white">
+                <a href="{{ route('cashier.history') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('cashier.history') ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' : 'text-gray-400 hover:bg-[#233B36] hover:text-white' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -97,6 +97,10 @@
                         <span class="font-medium">Keluar</span>
                     </button>
                 </form>
+                
+                <div class="pt-4 text-center">
+                    <p class="text-[10px] text-gray-500 opacity-60">Made with love by Productivtyera</p>
+                </div>
             </div>
         </aside>
 

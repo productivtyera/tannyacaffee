@@ -15,11 +15,13 @@ class Order extends Model
     protected $fillable = [
         'order_number',
         'order_type',
+        'table_number',
         'status',
         'payment_method',
         'payment_status',
         'total_hpp',
         'total_price',
+        'amount_paid',
         'cashier_id',
     ];
 

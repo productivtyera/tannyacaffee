@@ -52,12 +52,14 @@ class RecipeController extends Controller
             'category_id' => 'required|exists:categories,id',
             'base_price' => 'nullable|numeric|min:0',
             'image' => 'nullable|image|max:2048',
+            'description' => 'nullable|string',
         ]);
 
         $data = [
             'name' => $validated['name'],
             'category_id' => $validated['category_id'],
             'base_price' => $validated['base_price'] ?? 0,
+            'description' => $validated['description'] ?? '',
             'is_available' => true,
         ];
 
@@ -77,28 +79,50 @@ class RecipeController extends Controller
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'category_id' => 'sometimes|required|exists:categories,id',
             'base_price' => 'nullable|numeric|min:0',
-            'recipes' => 'required|array',
-            'recipes.*.stock_id' => 'required|exists:stocks,id',
-            'recipes.*.amount_needed' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
+            'recipes' => 'sometimes|array',
+            'recipes.*.stock_id' => 'required_with:recipes|exists:stocks,id',
+            'recipes.*.amount_needed' => 'required_with:recipes|numeric|min:0',
         ]);
 
         try {
-            DB::transaction(function () use ($product, $validated) {
-                if (isset($validated['base_price'])) {
-                    $product->update(['base_price' => $validated['base_price']]);
+            DB::transaction(function () use ($product, $validated, $request) {
+                $updateData = [];
+                if (isset($validated['name'])) $updateData['name'] = $validated['name'];
+                if (isset($validated['category_id'])) $updateData['category_id'] = $validated['category_id'];
+                
+                if ($request->hasFile('image')) {
+                    $updateData['image_path'] = $request->file('image')->store('products', 'public');
                 }
 
-                $product->recipes()->delete();
+                if (array_key_exists('base_price', $validated)) {
+                    $updateData['base_price'] = $validated['base_price'];
+                }
+                if (array_key_exists('description', $validated)) {
+                    $updateData['description'] = $validated['description'] ?? '';
+                }
+                
+                if (!empty($updateData)) {
+                    $product->update($updateData);
+                }
 
-                foreach ($validated['recipes'] as $recipeData) {
-                    $product->recipes()->create($recipeData);
+                if (isset($validated['recipes'])) {
+                    $product->recipes()->delete();
+
+                    foreach ($validated['recipes'] as $recipeData) {
+                        $product->recipes()->create($recipeData);
+                    }
                 }
             });
 
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => true,
+                    'product' => $product->fresh()->load('category'),
                     'message' => 'Resep berhasil diperbarui!'
                 ]);
             }
@@ -113,6 +137,34 @@ class RecipeController extends Controller
             }
 
             return redirect()->back()->with('error', 'Gagal menyimpan resep!');
+        }
+    }
+
+    public function destroy(Product $product)
+    {
+        try {
+            DB::transaction(function () use ($product) {
+                $product->recipes()->delete();
+                $product->delete();
+            });
+
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Produk berhasil dihapus!'
+                ]);
+            }
+
+            return redirect()->route('admin.recipes.index')->with('success', 'Produk berhasil dihapus!');
+        } catch (\Exception $e) {
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghapus produk: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Gagal menghapus produk!');
         }
     }
 

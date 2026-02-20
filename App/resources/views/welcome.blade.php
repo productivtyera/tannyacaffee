@@ -273,5 +273,9 @@
         @if (Route::has('login'))
             <div class="h-14.5 hidden lg:block"></div>
         @endif
+        
+        <footer class="py-6 text-center text-xs text-gray-500 dark:text-gray-400 opacity-60">
+            Made with love by Productivtyera
+        </footer>
     </body>
 </html>

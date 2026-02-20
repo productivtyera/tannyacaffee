@@ -44,8 +44,8 @@
 
                     <div class="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                         @foreach($products as $product)
-                            <a href="{{ route('admin.recipes.show', $product->id) }}" 
-                               class="flex items-center gap-4 p-4 rounded-3xl transition-all {{ $selectedProduct && $selectedProduct->id === $product->id ? 'bg-[#f0f9f4] border-2 border-[#2D5A27]/10' : 'hover:bg-gray-50 border-2 border-transparent' }}">
+                            <div onclick="window.location='{{ route('admin.recipes.show', $product->id) }}'" 
+                               class="flex items-center gap-4 p-4 rounded-3xl transition-all cursor-pointer {{ $selectedProduct && $selectedProduct->id === $product->id ? 'bg-[#f0f9f4] border-2 border-[#2D5A27]/10' : 'hover:bg-gray-50 border-2 border-transparent' }}">
                                 <div class="relative">
                                     <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : 'https://ui-avatars.com/api/?name=' . urlencode($product->name) . '&background=f3f4f6&color=a1a1aa' }}" 
                                          alt="{{ $product->name }}" 
@@ -58,10 +58,16 @@
                                     <h5 class="text-[15px] font-bold text-[#1a2b3c] truncate">{{ $product->name }}</h5>
                                     <p class="text-[10px] font-black text-gray-400 uppercase tracking-tighter">{{ $product->category->name ?? 'Uncategorized' }}</p>
                                 </div>
-                                <div class="text-gray-300">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                <div class="text-gray-300" onclick="event.stopPropagation()">
+                                    <form action="{{ route('admin.recipes.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        </button>
+                                    </form>
                                 </div>
-                            </a>
+                            </div>
                         @endforeach
                     </div>
                 </div>
@@ -85,6 +91,9 @@
                                     <span class="bg-[#f0f9f4] text-[#2ecc71] text-[10px] font-black px-3 py-1 rounded-full border border-[#2ecc71]/10 uppercase">AKTIF</span>
                                 </div>
                                 <p class="text-gray-400 font-medium">Kategori: <span class="text-[#1a2b3c] font-bold">{{ $selectedProduct->category->name ?? 'Uncategorized' }}</span> • Cold/Hot Beverage</p>
+                            @if($selectedProduct->description)
+                                <p class="text-gray-500 text-sm mt-2">{{ $selectedProduct->description }}</p>
+                            @endif
                             </div>
 
                             <div class="flex gap-3">
@@ -344,6 +353,12 @@
                                 </div>
                             </div>
 
+                            <!-- Description -->
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">DESKRIPSI (OPSIONAL)</label>
+                                <textarea x-model="productForm.description" placeholder="Contoh: Kopi dengan rasa caramel..." class="w-full bg-[#f8f9fa] border-none rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#2D5A27]/20 resize-none h-24"></textarea>
+                            </div>
+
                             <div class="pt-6">
                                 <button @click="nextStep()" 
                                         :disabled="loading"
@@ -553,6 +568,7 @@
                 name: '',
                 category_id: '',
                 base_price: 0,
+                description: '',
                 image: null,
                 imagePreview: null
             },
@@ -564,6 +580,7 @@
                     this.productForm.name = product.name;
                     this.productForm.category_id = product.category_id;
                     this.productForm.base_price = product.base_price;
+                    this.productForm.description = product.description || '';
                     this.step = 2; // Go straight to recipe if editing
                 } else {
                     this.selectedProduct = null;
@@ -580,6 +597,7 @@
                     name: '',
                     category_id: '',
                     base_price: 0,
+                    description: '',
                     image: null,
                     imagePreview: null
                 };
@@ -605,18 +623,32 @@
                     const formData = new FormData();
                     formData.append('name', this.productForm.name);
                     formData.append('category_id', this.productForm.category_id);
+                    formData.append('description', this.productForm.description);
                     // base_price removed from step 1
                     if (this.productForm.image) {
                         formData.append('image', this.productForm.image);
                     }
 
                     try {
-                        const response = await axios.post('/admin/recipes', formData, {
-                            headers: { 'Content-Type': 'multipart/form-data' }
-                        });
+                        let response;
+                        if (this.selectedProduct) {
+                            // Update existing product
+                            formData.append('_method', 'PUT');
+                            response = await axios.post(`/admin/recipes/${this.selectedProduct.id}`, formData, {
+                                headers: { 'Content-Type': 'multipart/form-data' }
+                            });
+                        } else {
+                            // Create new product
+                            response = await axios.post('/admin/recipes', formData, {
+                                headers: { 'Content-Type': 'multipart/form-data' }
+                            });
+                        }
                         
                         if (response.data.success) {
-                            this.selectedProduct = response.data.product;
+                            // Update selectedProduct with latest data
+                            if (response.data.product) {
+                                this.selectedProduct = response.data.product;
+                            }
                             this.step = 2;
                         }
                     } catch (error) {
@@ -698,6 +730,7 @@
                 try {
                     await axios.put(`/admin/recipes/${this.selectedProduct.id}`, {
                         base_price: this.productForm.base_price,
+                        description: this.productForm.description,
                         recipes: this.currentRecipe.map(item => ({
                             stock_id: item.stock_id,
                             amount_needed: item.amount_needed

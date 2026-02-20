@@ -39,11 +39,7 @@
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center bg-[#FDFDF7]/90 backdrop-blur-sm">
         <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-[#1A2F2B] rounded-lg flex items-center justify-center text-white">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-            </div>
+                    <img src="{{ asset('logo.png') }}" alt="Tannya Caffe Logo" class="w-10 h-10 object-cover rounded-full shadow-xl">
             <span class="font-bold text-xl text-[#1A2F2B]">Tannya Caffe</span>
         </div>
 
@@ -53,12 +49,12 @@
             <a href="#" class="hover:text-[#1A2F2B] transition">Lokasi</a>
         </div>
 
-        <button class="bg-[#1A2F2B] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-green-800 transition shadow-lg shadow-green-900/20 flex items-center gap-2">
+        <a href="{{ route('customer.order') }}" class="bg-[#1A2F2B] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-green-800 transition shadow-lg shadow-green-900/20 flex items-center gap-2">
             Pesan Sekarang
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-        </button>
+        </a>
     </nav>
 
     <!-- Hero Section -->
@@ -81,15 +77,12 @@
                 </p>
                 
                 <div class="flex flex-wrap gap-4">
-                    <button class="bg-[#D32F2F] text-white px-8 py-4 rounded-full font-bold hover:bg-red-700 transition shadow-lg shadow-red-500/30 flex items-center gap-2">
+                    <a href="{{ route('customer.order') }}" class="bg-[#D32F2F] text-white px-8 py-4 rounded-full font-bold hover:bg-red-700 transition shadow-lg shadow-red-500/30 flex items-center gap-2">
                         Pesan Sekarang
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                         </svg>
-                    </button>
-                    <button class="bg-white text-[#1A2F2B] border border-gray-200 px-8 py-4 rounded-full font-bold hover:bg-gray-50 transition">
-                        Lihat Menu
-                    </button>
+                    </a>
                 </div>
 
                 <div class="flex items-center gap-3 text-sm text-gray-500 pt-4">
@@ -118,7 +111,7 @@
     <section class="py-20 px-8 max-w-7xl mx-auto">
         <div class="flex justify-between items-end mb-12">
             <div>
-                <h2 class="text-3xl font-bold text-[#1A2F2B] mb-2 font-instrument">Menu Spesial Pekan Ini</h2>
+                <h2 class="text-3xl font-bold text-[#1A2F2B] mb-2 font-instrument">Pilihan random hari ini</h2>
                 <p class="text-gray-500">Siap dipesan langsung. Gak perlu login.</p>
             </div>
             <div class="flex gap-2">
@@ -156,12 +149,12 @@
                 <h3 class="text-xl font-bold text-[#1A2F2B] mb-2">{{ $product->name }}</h3>
                 <p class="text-gray-500 text-sm mb-4 line-clamp-2">{{ $product->description ?? 'Nikmati rasa otentik yang tak terlupakan.' }}</p>
                 
-                <button class="w-full py-3 bg-[#1A2F2B] text-white rounded-xl font-bold hover:bg-green-800 transition flex items-center justify-center gap-2">
+                <a href="{{ route('customer.order', ['add_product_id' => $product->id]) }}" class="w-full py-3 bg-[#1A2F2B] text-white rounded-xl font-bold hover:bg-green-800 transition flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Tambah
-                </button>
+                </a>
             </div>
             @empty
             <!-- Fallback Static Cards if no products -->
@@ -235,22 +228,20 @@
     <!-- Footer -->
     <footer class="bg-[#1F352B] text-white/50 py-12 px-8">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="text-xs text-justify">
+                <p>© 2024 Tannya Caffe. All rights reserved.</p>
+                <p class="mt-1 opacity-60">Made with love by Productivtyera</p>
+            </div>
+
             <div class="flex items-center gap-2 text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <span class="font-bold text-lg">Tannya Caffe</span>
             </div>
 
             <div class="flex gap-8 text-sm">
-                <a href="#" class="hover:text-white transition">Instagram</a>
+                {{-- <a href="#" class="hover:text-white transition">Instagram</a>
                 <a href="#" class="hover:text-white transition">Twitter</a>
-                <a href="#" class="hover:text-white transition">Tiktok</a>
+                <a href="#" class="hover:text-white transition">Tiktok</a> --}}
             </div>
 
-            <div class="text-xs">
-                © 2024 Tannya Caffe. All rights reserved.
-            </div>
             
             <!-- TUTUP APLIKASI Button -->
             <button type="button" @click="showExitModal = true" class="bg-white text-[#1A2F2B] px-6 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 transition flex items-center gap-2">
@@ -325,9 +316,9 @@
         }, { once: true });
 
         // Prevent leaving the page easily
-        window.onbeforeunload = function() {
-            return "Apakah Anda yakin ingin keluar dari Mode Customer?";
-        };
+        // window.onbeforeunload = function() {
+        //     return "Apakah Anda yakin ingin keluar dari Mode Customer?";
+        // };
     </script>
 </body>
 </html>

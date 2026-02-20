@@ -15,7 +15,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('order_number')->unique();
             $table->enum('order_type', ['takeaway', 'dine_in']);
-            $table->enum('status', ['pending', 'paid', 'processing', 'completed', 'cancelled']);
+            $table->enum('status', ['pending', 'paid', 'processing', 'ready', 'completed', 'cancelled']);
             $table->enum('payment_method', ['cash', 'midtrans_qris', 'midtrans_bank']);
             $table->enum('payment_status', ['unpaid', 'paid']);
             $table->integer('total_hpp');

@@ -74,6 +74,13 @@
                 @yield('content')
             </div>
         </main>
+
+        <footer class="bg-white border-t border-gray-100 py-6 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-400">
+                <p>&copy; 2024 Tannya Caffe. All rights reserved.</p>
+                <p class="mt-1">Made with love by Productivtyera</p>
+            </div>
+        </footer>
     </div>
 </body>
 </html>
